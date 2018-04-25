@@ -1,0 +1,17 @@
+{% extends "user.html" %}
+{% block title %}Flasky{% endblock %}
+{% block page_content %}
+<div class="page-header">
+<form class="form-inline" method="post" action="/find">
+  <div class="form-group">
+    <label class="sr-only" for="exampleInputAmount">未填写</label>
+    <div class="input-group">
+      <div class="input-group-addon">名称</div>
+      <input type="text" class="form-control" name="sb" id="exampleInputAmount" placeholder="微信">
+      <div class="input-group-addon">.avi</div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">搜索</button>
+</form>
+</div>
+{% endblock %}
