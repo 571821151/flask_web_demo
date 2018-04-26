@@ -1,13 +1,10 @@
-
-{% extends "user.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
 {% block title %}Flasky{% endblock %}
 {% block page_content %}
 <div class="page-header">
 <h1>Hello, {% if name %}{{ name }}{% else %}Stranger{% endif %}!</h1>
 </div>
-{{ form.hidden_tag() }}
 <!--可以为字段指定 id 或 class 属性,然后定义 CSS 样式-->
-{{ form.author.label }} {{ form.author(id='my-text-field') }}
-{{ form.submit() }}
+{% import "bootstrap/wtf.html" as wtf %}
+{{ wtf.quick_form(form) }}
 {% endblock %}

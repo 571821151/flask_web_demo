@@ -1,12 +1,21 @@
-from flask import Flask,request,render_template,flash,redirect,url_for
+from flask import Flask,request,render_template,flash,redirect,url_for,session
+from flask_sqlalchemy import SQLAlchemy
 from Forms.login_form import LoginForm
 from Forms.name import BulletinForm
 from flask_bootstrap import Bootstrap
+import os
 
 app=Flask(__name__)
 bootstrap = Bootstrap(app)
 
+db = SQLAlchemy(app)
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+
 app.config['SECRET_KEY'] = '123456'
+
+app.config['SQLALCHEMY_DATABASE_URI'] ='sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 
 
 @app.route('/')
@@ -21,9 +30,10 @@ def index(keyword=""):
 def user():
    return render_template('user.html',name='cly')
 
-@app.route('/test')
+@app.route('/test',methods=['GET','Post'])
 def test():
     form = BulletinForm(request.form)
+    flash('sb')
     return render_template("test.html", form=form)
 
 
@@ -42,8 +52,11 @@ def login():
     else:
         form = LoginForm(formdata=request.form)
         if form.validate():
+            session['name']=form.name
             print("用户提交的数据用过格式验证，值为：%s"%form.data)
-            return "登录成功"
+            username=session.get('name')
+            print(url_for('index'))
+            return  redirect(url_for("index"))
         else:
             print(form.errors,"错误信息")
         return render_template("login.html",form=form)
@@ -55,3 +68,20 @@ def get():
 
 if  __name__=='__main__':
     app.run(debug=True)
+
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True)
+
+
+    def __repr__(self):
+        return '<Role %r>' % self.name
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, index=True)
+    password = db.Column(db.String(64))
+    def __repr__(self):
+        return '<User %r>' % self.username
